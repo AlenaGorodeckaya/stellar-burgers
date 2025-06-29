@@ -38,3 +38,11 @@ export type TUser = {
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+// Перечисление состояний запроса для отслеживания статуса асинхронных операций
+export enum RequestState {
+  IDLE = 'idle', // Запрос не выполнялся
+  LOADING = 'loading', // В процессе
+  SUCCESS = 'success', // Успешно
+  FAILED = 'failed' // Ошибка
+}

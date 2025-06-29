@@ -66,3 +66,5 @@ export const BurgerIngredientsUI: FC<BurgerIngredientsUIProps> = memo(
     </>
   )
 );
+
+//Готово

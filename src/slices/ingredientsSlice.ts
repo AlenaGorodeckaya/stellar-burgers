@@ -70,6 +70,7 @@ export const ingredientsSlice = createSlice({
       })
       .addCase(fetchIngredients.rejected, (state) => {
         state.isLoading = false;
+        state.ingredients = null;
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.isLoading = false;

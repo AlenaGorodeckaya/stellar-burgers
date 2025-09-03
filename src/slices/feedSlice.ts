@@ -4,7 +4,9 @@ import { getFeedsApi } from '@api';
 import { TOrder } from '@utils-types';
 
 // Асинхронный для получения ленты заказов
-export const fetchFeeds = createAsyncThunk('feeds/fetchAll', getFeedsApi);
+export const fetchFeeds = createAsyncThunk('feeds/getAll', async () =>
+  getFeedsApi()
+);
 
 // Интерфейс состояния ленты заказов
 export interface FeedState {
@@ -77,5 +79,4 @@ export const {
   selectFeedTotalToday
 } = feedSlice.selectors;
 
-// Экспорт reducer по умолчанию
 export default feedSlice.reducer;

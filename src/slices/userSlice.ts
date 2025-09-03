@@ -1,10 +1,7 @@
 // Аутентификация и данные пользователя
 import { TUser, TOrder } from '@utils-types';
-
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-
 import { setCookie, deleteCookie } from '../utils/cookie';
-
 import {
   registerUserApi,
   getUserApi,
@@ -18,12 +15,55 @@ import {
   TLoginData
 } from '@api';
 
+// Асинхронные действия пользователя (thunks)
+
+// Регистрация нового пользователя
+export const registerUser = createAsyncThunk(
+  'user/register',
+  async (userData: TRegisterData) => registerUserApi(userData).then(acceptAuth)
+);
+
+// Получение данных о текущем пользователе
+export const fetchUserData = createAsyncThunk('user/fetchData', async () =>
+  getUserApi()
+);
+
+// Аутентификация пользователя
+export const loginUser = createAsyncThunk(
+  'user/login',
+  async (userCredentials: TLoginData) =>
+    loginUserApi(userCredentials).then(acceptAuth)
+);
+
+// Получение списка заказов пользователя
+export const fetchUserOrders = createAsyncThunk('user/fetchOrders', async () =>
+  getOrdersApi()
+);
+
+// Обновление профиля пользователя
+export const updateUserProfile = createAsyncThunk(
+  'user/updateProfile',
+  async (userData: Partial<TUser>) => updateUserApi(userData)
+);
+
+// Выход пользователя из системы
+export const logoutUser = createAsyncThunk('user/logout', async () =>
+  logoutApi().then(clearAuth)
+);
+
+// Сброс пароля пользователя
+export const resetUserPassword = createAsyncThunk(
+  'user/resetPassword',
+  async (passwordData: { password: string; token: string }) =>
+    resetPasswordApi(passwordData)
+);
+
 // Константы для ключей хранения токенов
 const REFRESH_TOKEN_KEY = 'refreshToken';
 const ACCESS_TOKEN_KEY = 'accessToken';
 
 // Обработка аутентификации пользователя (*успех*)
-function handleUserAuthSuccess(
+function acceptAuth(
   data: TServerResponse<{
     refreshToken: string;
     accessToken: string;
@@ -38,7 +78,7 @@ function handleUserAuthSuccess(
 }
 
 // Обработка выхода пользователя из системы
-function handleUserLogout(data: TServerResponse<{}>) {
+function clearAuth(data: TServerResponse<{}>) {
   if (data.success) {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     deleteCookie(ACCESS_TOKEN_KEY);
@@ -46,70 +86,26 @@ function handleUserLogout(data: TServerResponse<{}>) {
   return data;
 }
 
-// Асинхронные действия пользователя (thunks)
-
-// Регистрация нового пользователя
-export const registerUser = createAsyncThunk(
-  'user/register',
-  async (userData: TRegisterData) =>
-    registerUserApi(userData).then(handleUserAuthSuccess)
-);
-
-// Получение данных о текущем пользователе
-export const fetchUserData = createAsyncThunk('user/fetchData', getUserApi);
-
-// Аутентификация пользователя
-export const loginUser = createAsyncThunk(
-  'user/login',
-  async (userCredentials: TLoginData) =>
-    loginUserApi(userCredentials).then(handleUserAuthSuccess)
-);
-
-// Получение списка заказов пользователя
-export const fetchUserOrders = createAsyncThunk(
-  'user/fetchOrders',
-  getOrdersApi
-);
-
-// Обновление профиля пользователя
-export const updateUserProfile = createAsyncThunk(
-  'user/updateProfile',
-  updateUserApi
-);
-
-// Выход пользователя из системы
-export const logoutUser = createAsyncThunk('user/logout', async () =>
-  logoutApi().then(handleUserLogout)
-);
-
-// Сброс пароля пользователя
-export const resetUserPassword = createAsyncThunk(
-  'user/resetPassword',
-  async (passwordData: { password: string; token: string }) =>
-    resetPasswordApi(passwordData)
-);
-
-// Структура данных дял управления состоянием
+// Структура данных для управления состоянием
 export interface UserState {
+  isUserLoading: boolean;
   userData: TUser | null; // Информация профиля
   userOrders: TOrder[] | null; // Заказы пользователя
-  isUserLoading: boolean;
   userError: string | null;
 }
 
 // Начальное состояние пользователя
-const initialUserState: UserState = {
+const initialState: UserState = {
+  isUserLoading: false,
   userData: null,
   userOrders: null,
-  isUserLoading: false,
   userError: null
 };
 
 // Слайс управления состоянием пользователя
-
 export const userSlice = createSlice({
   name: 'user',
-  initialState: initialUserState,
+  initialState,
   reducers: {},
   selectors: {
     selectUserData: (state) => state.userData,
@@ -119,7 +115,6 @@ export const userSlice = createSlice({
     selectIsAuthenticated: (state) => state.userData !== null
   },
   extraReducers: (builder) => {
-    // Обработчики для registerUser
     builder
       .addCase(registerUser.pending, (state) => {
         state.isUserLoading = true;
@@ -137,7 +132,6 @@ export const userSlice = createSlice({
         }
       });
 
-    // Обработчики для fetchUserData
     builder
       .addCase(fetchUserData.pending, (state) => {
         state.isUserLoading = true;
@@ -156,7 +150,6 @@ export const userSlice = createSlice({
         }
       });
 
-    // Обработчики для loginUser
     builder
       .addCase(loginUser.pending, (state) => {
         state.isUserLoading = true;
@@ -174,7 +167,6 @@ export const userSlice = createSlice({
         }
       });
 
-    // Обработчики для updateUserProfile
     builder
       .addCase(updateUserProfile.pending, (state) => {
         state.isUserLoading = true;
@@ -192,7 +184,6 @@ export const userSlice = createSlice({
         }
       });
 
-    // Обработчики для fetchUserOrders
     builder
       .addCase(fetchUserOrders.pending, (state) => {
         state.userError = null;
@@ -205,7 +196,6 @@ export const userSlice = createSlice({
         state.userError = null;
       });
 
-    // Обработчики для resetUserPassword
     builder
       .addCase(resetUserPassword.pending, (state) => {
         state.isUserLoading = true;
@@ -222,7 +212,6 @@ export const userSlice = createSlice({
         }
       });
 
-    // Обработчики для logoutUser
     builder
       .addCase(logoutUser.pending, (state) => {
         state.isUserLoading = true;

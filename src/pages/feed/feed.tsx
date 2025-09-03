@@ -1,15 +1,44 @@
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
-import { FC } from 'react';
+import { BackgroundProps } from './../../components/protected-route/type';
+import { FC, useEffect } from 'react';
 
-export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+import { useAppDispatch, useAppSelector } from '../../services/store';
+import {
+  fetchFeeds,
+  selectFeedLoading,
+  selectFeedOrders
+} from '../../slices/feedSlice';
+import {
+  fetchIngredients,
+  selectIngredients,
+  selectIngredientsLoading
+} from '../../slices/ingredientsSlice';
 
-  if (!orders.length) {
-    return <Preloader />;
+export const Feed: FC<BackgroundProps> = ({ wallpaper }: BackgroundProps) => {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchFeeds());
+    dispatch(fetchIngredients());
+  }, []);
+
+  const orders = useAppSelector(selectFeedOrders);
+  const isFeedsLoading = useAppSelector(selectFeedLoading);
+
+  const ingredients = useAppSelector(selectIngredients);
+  const isIngredientsLoading = useAppSelector(selectIngredientsLoading);
+
+  if (!orders || !ingredients || isFeedsLoading || isIngredientsLoading) {
+    return wallpaper ? null : <Preloader />;
   }
 
-  <FeedUI orders={orders} handleGetFeeds={() => {}} />;
+  return (
+    <FeedUI
+      orders={orders}
+      ingredients={ingredients}
+      handleGetFeeds={() => {
+        dispatch(fetchFeeds());
+      }}
+    />
+  );
 };

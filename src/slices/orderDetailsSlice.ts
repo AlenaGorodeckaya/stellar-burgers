@@ -4,13 +4,9 @@ import { getOrderByNumberApi } from '@api';
 import { TOrder } from '@utils-types';
 
 // Асинхронное для получения заказа по номеру
-
 export const fetchOrderByNumber = createAsyncThunk(
   'orderDetails/fetchOrderByNumber',
-  async (number: number) => {
-    const response = await getOrderByNumberApi(number);
-    return response.orders[0];
-  }
+  async (number: number) => getOrderByNumberApi(number)
 );
 
 //Интерфейс состояния деталей заказа
@@ -64,7 +60,7 @@ export const orderDetailsSlice = createSlice({
       // Обработка успешной загрузки
       .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.order = action.payload;
+        state.order = action.payload.orders[0];
       });
   }
 });

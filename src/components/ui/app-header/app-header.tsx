@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import styles from './app-header.module.css';
 import { TAppHeaderUIProps } from './type';
 import {
@@ -8,27 +9,60 @@ import {
   ProfileIcon
 } from '@zlden/react-developer-burger-ui-components';
 
+// Функция для получения классов навигационной ссылки
+
+const getNavLinkClasses = ({ isActive }: { isActive: boolean }): string => {
+  const baseClass = styles.link;
+  const activeClass = isActive ? styles.link_active : '';
+
+  return [baseClass, activeClass].filter(Boolean).join(' ');
+};
+
 export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
-  <header className={styles.header}>
-    <nav className={`${styles.menu} p-4`}>
+  <header className={styles.header} role='banner'>
+    <nav className={`${styles.menu} p-4`} aria-label='Основная навигация'>
       <div className={styles.menu_part_left}>
-        <>
-          <BurgerIcon type={'primary'} />
-          <p className='text text_type_main-default ml-2 mr-10'>Конструктор</p>
-        </>
-        <>
-          <ListIcon type={'primary'} />
-          <p className='text text_type_main-default ml-2'>Лента заказов</p>
-        </>
+        <NavLink
+          to='/'
+          className={getNavLinkClasses}
+          end
+          aria-label='Перейти к конструктору бургеров'
+        >
+          <BurgerIcon type='primary' />
+          <span className='text text_type_main-default ml-2 mr-10'>
+            Конструктор
+          </span>
+        </NavLink>
+
+        <NavLink
+          to='/feed'
+          className={getNavLinkClasses}
+          aria-label='Перейти к ленте заказов'
+        >
+          <ListIcon type='primary' />
+          <span className='text text_type_main-default ml-2'>
+            Лента заказов
+          </span>
+        </NavLink>
       </div>
+
       <div className={styles.logo}>
-        <Logo className='' />
+        <Link to='/' aria-label='Перейти на главную страницу'>
+          <Logo className='' />
+        </Link>
       </div>
+
       <div className={styles.link_position_last}>
-        <ProfileIcon type={'primary'} />
-        <p className='text text_type_main-default ml-2'>
-          {userName || 'Личный кабинет'}
-        </p>
+        <NavLink
+          to='/profile'
+          className={getNavLinkClasses}
+          aria-label='Перейти в личный кабинет'
+        >
+          <ProfileIcon type='primary' />
+          <span className='text text_type_main-default ml-2'>
+            {userName || 'Личный кабинет'}
+          </span>
+        </NavLink>
       </div>
     </nav>
   </header>

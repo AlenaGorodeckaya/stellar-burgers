@@ -3,7 +3,6 @@ import { PayloadAction, createSlice, nanoid } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TIngredient } from '@utils-types';
 
 // Интерфейс конструктора бургера
-
 export interface BurgerConstructorState {
   bun: TConstructorIngredient | null; // Выбранная булошка
   ingredients: TConstructorIngredient[]; // Все кроме булки

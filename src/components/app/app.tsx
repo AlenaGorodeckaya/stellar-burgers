@@ -29,9 +29,17 @@ import {
   OrderInfo, // Компонент с информацией о заказе
   withProtection
 } from '@components';
+import { useAppDispatch } from '../../services/store';
+import { fetchIngredients } from '../../slices/ingredientsSlice';
+import { useEffect } from 'react';
 
 const App = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
   return (
     <div className={styles.app}>

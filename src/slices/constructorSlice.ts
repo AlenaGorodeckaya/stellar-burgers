@@ -1,6 +1,7 @@
 // Конструктор бургера (перетаскивание ингредиентов)
 import { PayloadAction, createSlice, nanoid } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TIngredient } from '@utils-types';
+import { RootState } from '../services/store';
 
 // Интерфейс конструктора бургера
 export interface BurgerConstructorState {
@@ -82,13 +83,12 @@ export const constructorSlice = createSlice({
       state.bun = null;
       state.ingredients = [];
     }
-  },
-
-  selectors: {
-    selectConstructorBun: (state) => state.bun, // Тек. булочка
-    selectConstructorIngredients: (state) => state.ingredients // Список ингредиентов
   }
 });
+
+export const selectConstructorBun = (state: RootState) => state.creator.bun; // Тек. булочка
+export const selectConstructorIngredients = (state: RootState) =>
+  state.creator.ingredients; // Список ингредиентов
 
 export const {
   addIngredient,
@@ -97,8 +97,5 @@ export const {
   removeIngredient,
   clearConstructor
 } = constructorSlice.actions;
-
-export const { selectConstructorBun, selectConstructorIngredients } =
-  constructorSlice.selectors;
 
 export default constructorSlice.reducer;

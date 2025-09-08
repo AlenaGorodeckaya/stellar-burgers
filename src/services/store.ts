@@ -15,7 +15,7 @@ import { userSlice } from '../slices/userSlice';
 
 // Создание единого состояния приложения из нескольких слайсов
 const rootReducer = combineSlices({
-  constructor: constructorSlice.reducer, // Конструктор бургера: булки, начинки, порядок ингредиентов
+  creator: constructorSlice.reducer, // Конструктор бургера: булки, начинки, порядок ингредиентов
   feed: feedSlice.reducer, // Лента заказов (реальное время)
   ingredients: ingredientsSlice.reducer, // Список всех доступных ингредиентов с сервера
   orderDetails: orderDetailsSlice.reducer, // Детали конкретного заказа для модального окна

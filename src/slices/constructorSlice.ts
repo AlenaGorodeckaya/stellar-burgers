@@ -4,7 +4,7 @@ import { TConstructorIngredient, TIngredient } from '@utils-types';
 
 // Интерфейс конструктора бургера
 export interface BurgerConstructorState {
-  bun: TConstructorIngredient | null; // Выбранная булошка
+  bun: TConstructorIngredient | null; // Выбранная булочка
   ingredients: TConstructorIngredient[]; // Все кроме булки
 }
 
@@ -24,9 +24,17 @@ export const constructorSlice = createSlice({
       reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
         const ingredient = action.payload;
 
-        ingredient.type === 'bun'
-          ? (state.bun = ingredient)
-          : state.ingredients.push(ingredient);
+        if (ingredient.type === 'bun') {
+          return {
+            ...state,
+            bun: ingredient
+          };
+        } else {
+          if (!state.ingredients) {
+            state.ingredients = [];
+          }
+          state.ingredients.push(ingredient);
+        }
       },
       // Уникальный ID к ингредиенту
       prepare: (ingredient: TIngredient) => ({

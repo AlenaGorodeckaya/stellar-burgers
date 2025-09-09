@@ -19,14 +19,16 @@ export const ProtectedRoute = ({
   const dispatch = useAppDispatch();
   const location = useLocation();
 
-  // Селекторы состояния авторизации
   const isCheckingAuth = useAppSelector(selectIsUserLoading);
   const isUserAuthenticated = useAppSelector(selectIsAuthenticated);
+  const refreshToken = localStorage.getItem('refreshToken');
 
-  // Загрузка данных пользователя при монтировании компонента
   useEffect(() => {
-    dispatch(fetchUserData());
-  }, [dispatch]);
+    // Запрашиваем данные пользователя только при наличии refreshToken
+    if (refreshToken) {
+      dispatch(fetchUserData());
+    }
+  }, [dispatch, refreshToken]);
 
   // Перенаправление для маршрутов, доступных только неавторизованным
   if (onlyUnAuth && isUserAuthenticated) {
@@ -34,8 +36,8 @@ export const ProtectedRoute = ({
     return <Navigate to={targetPath} replace />;
   }
 
-  // Перенаправление для защищенных маршрутов при отсутствии авторизации
-  if (!onlyUnAuth && !isUserAuthenticated) {
+  // Перенаправление для защищенных маршрутов при отсутствии авторизации и refreshToken
+  if (!onlyUnAuth && !refreshToken) {
     return <Navigate to='/login' state={{ from: location }} replace />;
   }
 
@@ -44,11 +46,19 @@ export const ProtectedRoute = ({
     return wallpaper ? null : <Preloader />;
   }
 
-  // Отображение дочерних элементов при успешной проверке
-  return <>{children}</>;
+  // Для маршрутов только для неавторизованных
+  if (onlyUnAuth && !isUserAuthenticated) {
+    return children;
+  }
+
+  // Для защищенных маршрутов
+  if (!onlyUnAuth && isUserAuthenticated) {
+    return children;
+  }
+
+  return wallpaper ? null : <Preloader />;
 };
 
-// Вспомогательная функция для создания защищенных маршрутов
 export const withProtection = (
   element: ReactElement,
   { onlyUnAuth, wallpaper }: ProtectedRouteOptions = {}

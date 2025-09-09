@@ -141,6 +141,7 @@ export const userSlice = createSlice({
         state.isUserLoading = false;
         state.userError =
           error.message || 'Ошибка получения данных пользователя';
+        state.userData = null;
       })
       .addCase(fetchUserData.fulfilled, (state, { payload }) => {
         state.isUserLoading = false;

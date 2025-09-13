@@ -2,6 +2,7 @@
 import { PayloadAction, createSlice, nanoid } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TIngredient } from '@utils-types';
 import { RootState } from '../services/store';
+import { performOrder } from './orderSlice';
 
 // Интерфейс конструктора бургера
 export interface BurgerConstructorState {
@@ -78,11 +79,19 @@ export const constructorSlice = createSlice({
       );
     },
 
-    // Всеее удаляем
+    // Всееее удаляем
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];
     }
+  },
+
+  // Добавляем обработку успешного создания заказа
+  extraReducers: (builder) => {
+    builder.addCase(performOrder.fulfilled, (state) => {
+      state.bun = null;
+      state.ingredients = [];
+    });
   }
 });
 

@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   ConstructorPage,
   Feed,
@@ -29,6 +29,8 @@ import { useEffect } from 'react';
 const App = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const background = location.state?.background;
 
   useEffect(() => {
     dispatch(fetchIngredients());
@@ -43,7 +45,7 @@ const App = () => {
     <div className={styles.app}>
       <AppHeader />
       <>
-        <Routes>
+        <Routes location={background || location}>
           <Route path='*' element={<NotFound404 />} />
           <Route path='/' element={<ConstructorPage />} />
           <Route path='/ingredients/:id' element={<ConstructorPage />} />
@@ -77,33 +79,35 @@ const App = () => {
             })}
           />
         </Routes>
-        <Routes>
-          <Route
-            path='/ingredients/:id'
-            element={
-              <Modal title='Детали ингредиента' onClose={() => navigate('/')}>
-                <IngredientDetails />
-              </Modal>
-            }
-          />
-          <Route
-            path='/feed/:number'
-            element={
-              <OrderModal onClose={() => navigate('/feed')}>
-                <OrderInfo />
-              </OrderModal>
-            }
-          />
-          <Route
-            path='/profile/orders/:number'
-            element={withProtection(
-              <OrderModal onClose={() => navigate('/profile/orders')}>
-                <OrderInfo />
-              </OrderModal>,
-              { wallpaper: true }
-            )}
-          />
-        </Routes>
+        {background && (
+          <Routes>
+            <Route
+              path='/ingredients/:id'
+              element={
+                <Modal title='Детали ингредиента' onClose={() => navigate(-1)}>
+                  <IngredientDetails />
+                </Modal>
+              }
+            />
+            <Route
+              path='/feed/:number'
+              element={
+                <OrderModal onClose={() => navigate(-1)}>
+                  <OrderInfo />
+                </OrderModal>
+              }
+            />
+            <Route
+              path='/profile/orders/:number'
+              element={withProtection(
+                <OrderModal onClose={() => navigate(-1)}>
+                  <OrderInfo />
+                </OrderModal>,
+                { wallpaper: true }
+              )}
+            />
+          </Routes>
+        )}
       </>
     </div>
   );

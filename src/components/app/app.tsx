@@ -1,36 +1,29 @@
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import {
-  Routes, // Обертка для групп маршрутов
-  Route, // Для определения маршрута
-  useNavigate // Хук для навигации
-} from 'react-router-dom';
-
-import {
-  ConstructorPage, // Главная страница бургер-конструктора
-  Feed, // Лента заказов
-  ForgotPassword, // Страница восстановления пароля
-  Login, // Страница авторизации
-  NotFound404, // Страница 404 ошибки
-  Profile, // Страница профиля
-  ProfileOrders, // Страница с историей заказов
-  Register, // Страница регистрации
-  ResetPassword // Страница сброса пароля
+  ConstructorPage,
+  Feed,
+  ForgotPassword,
+  Login,
+  NotFound404,
+  Profile,
+  ProfileOrders,
+  Register,
+  ResetPassword
 } from '@pages';
-
 import '../../index.css';
-
 import styles from './app.module.css';
-
-// Импорт вспомогательных компонентов
 import {
-  AppHeader, // Шапка приложения
-  IngredientDetails, // Компонент с деталями ингредиента
-  Modal, // Компонент модального окна
+  AppHeader,
+  IngredientDetails,
+  Modal,
   OrderModal,
-  OrderInfo, // Компонент с информацией о заказе
+  OrderInfo,
   withProtection
 } from '@components';
 import { useAppDispatch } from '../../services/store';
 import { fetchIngredients } from '../../slices/ingredientsSlice';
+import { fetchUserData } from '../../slices/userSlice';
+import { getCookie } from '../../utils/cookie';
 import { useEffect } from 'react';
 
 const App = () => {
@@ -39,6 +32,11 @@ const App = () => {
 
   useEffect(() => {
     dispatch(fetchIngredients());
+
+    const accessToken = getCookie('accessToken');
+    if (accessToken) {
+      dispatch(fetchUserData());
+    }
   }, [dispatch]);
 
   return (

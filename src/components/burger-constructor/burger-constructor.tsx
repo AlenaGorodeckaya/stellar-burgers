@@ -33,6 +33,7 @@ export const BurgerConstructor: FC = () => {
 
   useEffect(() => {
     if (orderConfirm && !authorithed) {
+      dispatch(clearOrder()); // Сбрасываем состояние заказа
       navigate('/login');
       return;
     }

@@ -28,12 +28,11 @@ export const orderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
-    // Действие для подтверждения заказа
     confirmOrder: (state) => {
       state.isOrderConfirmed = true;
     },
-    // Действие для очистки данных заказа
     clearOrder: (state) => {
+      state.isOrderConfirmed = false;
       state.completed = null;
     }
   },

@@ -10,7 +10,6 @@ import {
 } from '@zlden/react-developer-burger-ui-components';
 
 // Функция для получения классов навигационной ссылки
-
 const getNavLinkClasses = ({ isActive }: { isActive: boolean }): string => {
   const baseClass = styles.link;
   const activeClass = isActive ? styles.link_active : '';
@@ -28,10 +27,14 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
           end
           aria-label='Перейти к конструктору бургеров'
         >
-          <BurgerIcon type='primary' />
-          <span className='text text_type_main-default ml-2 mr-10'>
-            Конструктор
-          </span>
+          {({ isActive }) => (
+            <>
+              <BurgerIcon type={isActive ? 'primary' : 'secondary'} />
+              <span className='text text_type_main-default ml-2 mr-10'>
+                Конструктор
+              </span>
+            </>
+          )}
         </NavLink>
 
         <NavLink
@@ -39,10 +42,14 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
           className={getNavLinkClasses}
           aria-label='Перейти к ленте заказов'
         >
-          <ListIcon type='primary' />
-          <span className='text text_type_main-default ml-2'>
-            Лента заказов
-          </span>
+          {({ isActive }) => (
+            <>
+              <ListIcon type={isActive ? 'primary' : 'secondary'} />
+              <span className='text text_type_main-default ml-2'>
+                Лента заказов
+              </span>
+            </>
+          )}
         </NavLink>
       </div>
 
@@ -58,10 +65,14 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
           className={getNavLinkClasses}
           aria-label='Перейти в личный кабинет'
         >
-          <ProfileIcon type='primary' />
-          <span className='text text_type_main-default ml-2'>
-            {userName || 'Личный кабинет'}
-          </span>
+          {({ isActive }) => (
+            <>
+              <ProfileIcon type={isActive ? 'primary' : 'secondary'} />
+              <span className='text text_type_main-default ml-2'>
+                {userName || 'Личный кабинет'}
+              </span>
+            </>
+          )}
         </NavLink>
       </div>
     </nav>

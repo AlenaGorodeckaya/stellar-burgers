@@ -1,26 +1,21 @@
-import styles from './constructor-page.module.css';
-
-import { BurgerIngredients, BurgerConstructor } from '../../components';
-import { Preloader } from '../../components/ui';
 import { FC, useEffect } from 'react';
-
+import styles from './constructor-page.module.css';
+import { Preloader } from '../../components/ui';
+import { BurgerIngredients, BurgerConstructor } from '../../components';
+import { useAppSelector, useAppDispatch } from '../../services/store';
 import {
   fetchIngredients,
   selectIngredientsLoading
 } from '../../slices/ingredientsSlice';
-
-import { useAppSelector, useAppDispatch } from '../../services/store';
-
-import { BackgroundProps } from './../../components/protected-route/type';
-
 import { useParams, useLocation } from 'react-router-dom';
 import { IngredientDetails } from '../../components/ingredient-details/ingredient-details';
+import { BackgroundProps } from './../../components/protected-route/type';
 
 export const ConstructorPage: FC<BackgroundProps> = ({
   wallpaper
 }: BackgroundProps) => {
   const dispatch = useAppDispatch();
-  const params = useParams();
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const background = location.state?.background;
 
@@ -30,12 +25,8 @@ export const ConstructorPage: FC<BackgroundProps> = ({
 
   const isIngredientsLoading = useAppSelector(selectIngredientsLoading);
 
-  if (params.id && !background) {
-    return (
-      <div>
-        <IngredientDetails />
-      </div>
-    );
+  if (id && !background) {
+    return <IngredientDetails />;
   }
 
   return (

@@ -71,15 +71,21 @@ export const OrderInfo: FC = () => {
 
   const isDirectAccess = !location.state?.background;
 
-  return (
-    <div className={isDirectAccess ? styles.wrap : ''}>
-      {isDirectAccess && (
-        <h1
-          className={`text text_type_digits-default mt-10 mb-5 ${styles.number}`}
-        >
+  if (isDirectAccess) {
+    return (
+      <div className={styles.directAccessContainer}>
+        <h1 className={`text text_type_digits-default ${styles.orderNumber}`}>
           #{String(orderInfo.number).padStart(6, '0')}
         </h1>
-      )}
+        <div className={styles.wrap}>
+          <OrderInfoUI orderInfo={orderInfo} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.wrap}>
       <OrderInfoUI orderInfo={orderInfo} />
     </div>
   );

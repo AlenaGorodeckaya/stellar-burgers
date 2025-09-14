@@ -8,19 +8,28 @@ import {
   selectIngredients
 } from '../../slices/ingredientsSlice';
 import { BackgroundProps } from './../../components/protected-route/type';
+import { useParams, useLocation } from 'react-router-dom';
+import { OrderInfo } from '../../components/order-info/order-info';
 
 export const ProfileOrders: FC<BackgroundProps> = ({
   wallpaper
 }: BackgroundProps) => {
   const dispatch = useAppDispatch();
-  const orders = useAppSelector(selectUserOrders);
-  const ingredients = useAppSelector(selectIngredients);
+  const params = useParams();
+  const location = useLocation();
+  const background = location.state?.background;
 
   useEffect(() => {
-    console.log('fetch orders and ingredients', orders);
     dispatch(fetchUserOrders());
     dispatch(fetchIngredients());
   }, []);
+
+  const orders = useAppSelector(selectUserOrders);
+  const ingredients = useAppSelector(selectIngredients);
+
+  if (params.number && !background) {
+    return <OrderInfo />;
+  }
 
   if (!orders || !ingredients) {
     return wallpaper ? null : <Preloader />;

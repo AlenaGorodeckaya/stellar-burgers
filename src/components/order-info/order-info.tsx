@@ -2,19 +2,21 @@ import { FC, useMemo, useEffect } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../services/store';
 import {
   fetchOrderByNumber,
   selectOrderDetails
 } from '../../slices/orderDetailsSlice';
 import { selectIngredients } from '../../slices/ingredientsSlice';
+import styles from '../../components/ui/order-info/order-info.module.css';
 
 export const OrderInfo: FC = () => {
   const dispatch = useAppDispatch();
   const orderData = useAppSelector(selectOrderDetails);
   const ingredients = useAppSelector(selectIngredients);
   const number = Number(useParams<{ number: string }>().number);
+  const location = useLocation();
 
   useEffect(() => {
     if (!!number) {
@@ -22,7 +24,6 @@ export const OrderInfo: FC = () => {
     }
   }, [dispatch, number]);
 
-  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients || !ingredients.length) return null;
 
@@ -68,5 +69,18 @@ export const OrderInfo: FC = () => {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  const isDirectAccess = !location.state?.background;
+
+  return (
+    <div className={isDirectAccess ? styles.wrap : ''}>
+      {isDirectAccess && (
+        <h1
+          className={`text text_type_digits-default mt-10 mb-5 ${styles.number}`}
+        >
+          #{String(orderInfo.number).padStart(6, '0')}
+        </h1>
+      )}
+      <OrderInfoUI orderInfo={orderInfo} />
+    </div>
+  );
 };

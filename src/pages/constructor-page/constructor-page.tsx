@@ -13,15 +13,30 @@ import { useAppSelector, useAppDispatch } from '../../services/store';
 
 import { BackgroundProps } from './../../components/protected-route/type';
 
+import { useParams, useLocation } from 'react-router-dom';
+import { IngredientDetails } from '../../components/ingredient-details/ingredient-details';
+
 export const ConstructorPage: FC<BackgroundProps> = ({
   wallpaper
 }: BackgroundProps) => {
   const dispatch = useAppDispatch();
+  const params = useParams();
+  const location = useLocation();
+  const background = location.state?.background;
+
   useEffect(() => {
     dispatch(fetchIngredients());
   }, []);
 
   const isIngredientsLoading = useAppSelector(selectIngredientsLoading);
+
+  if (params.id && !background) {
+    return (
+      <div>
+        <IngredientDetails />
+      </div>
+    );
+  }
 
   return (
     <>

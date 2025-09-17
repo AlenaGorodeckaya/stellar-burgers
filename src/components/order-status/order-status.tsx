@@ -10,16 +10,22 @@ const statusText: { [key: string]: string } = {
 
 export const OrderStatus: FC<OrderStatusProps> = ({ status }) => {
   let textStyle = '';
+  let displayText = '';
+
   switch (status) {
     case 'pending':
       textStyle = '#E52B1A';
+      displayText = statusText.pending;
       break;
     case 'done':
       textStyle = '#00CCCC';
+      displayText = statusText.done;
       break;
-    default:
+    case 'created':
       textStyle = '#F2F2F3';
+      displayText = statusText.created;
+      break;
   }
 
-  return <OrderStatusUI textStyle={textStyle} text={statusText[textStyle]} />;
+  return <OrderStatusUI textStyle={textStyle} text={displayText} />;
 };

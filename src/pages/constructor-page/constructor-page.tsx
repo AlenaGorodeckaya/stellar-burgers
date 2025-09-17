@@ -1,20 +1,40 @@
-import { useSelector } from '../../services/store';
-
+import { FC, useEffect } from 'react';
 import styles from './constructor-page.module.css';
-
-import { BurgerIngredients } from '../../components';
-import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
-import { FC } from 'react';
+import { BurgerIngredients, BurgerConstructor } from '../../components';
+import { useAppSelector, useAppDispatch } from '../../services/store';
+import {
+  fetchIngredients,
+  selectIngredientsLoading
+} from '../../slices/ingredientsSlice';
+import { useParams, useLocation } from 'react-router-dom';
+import { IngredientDetails } from '../../components/ingredient-details/ingredient-details';
+import { BackgroundProps } from './../../components/protected-route/type';
 
-export const ConstructorPage: FC = () => {
-  /** TODO: взять переменную из стора */
-  const isIngredientsLoading = false;
+export const ConstructorPage: FC<BackgroundProps> = ({
+  wallpaper
+}: BackgroundProps) => {
+  const dispatch = useAppDispatch();
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const background = location.state?.background;
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+  }, []);
+
+  const isIngredientsLoading = useAppSelector(selectIngredientsLoading);
+
+  if (id && !background) {
+    return <IngredientDetails />;
+  }
 
   return (
     <>
       {isIngredientsLoading ? (
-        <Preloader />
+        wallpaper ? null : (
+          <Preloader />
+        )
       ) : (
         <main className={styles.containerMain}>
           <h1
